@@ -1,0 +1,264 @@
+{
+  "id": "holyclaude-onboarding",
+  "title": "HolyClaude Onboarding Tour",
+  "description": "Explore HolyClaude — a pre-configured Docker container that turns Claude Code into a complete AI development workstation with 50+ tools, a web UI, and headless browser support",
+  "version": "1.0.0",
+  "audience": "New Users & Contributors",
+  "prerequisites": ["Basic Docker knowledge", "Familiarity with Claude Code"],
+  "steps": [
+    {
+      "id": "step-1-overview",
+      "title": "Welcome to HolyClaude",
+      "description": "HolyClaude is a batteries-included Docker container for Claude Code. A single compose command replaces hours of manual setup. This bird's-eye view shows the entire repository — the build system, initialization scripts, process supervision, configuration, CI/CD, and documentation all working together.",
+      "estimatedTime": 30,
+      "focusDirectory": "",
+      "colorMode": "fileTypes"
+    },
+    {
+      "id": "step-2-docker-build",
+      "title": "The Docker Build",
+      "description": "The build is multi-stage, starting from a Node 22 base image. It layers in process supervision, system packages, Node and Python tooling, and multiple AI command-line interfaces. A build argument controls full versus slim image variants. The compose files provide both a quick-start and a fully-documented configuration.",
+      "estimatedTime": 60,
+      "focusDirectory": "",
+      "highlightLayers": [
+        {
+          "id": "docker-files",
+          "name": "Docker Build System",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "Dockerfile", "type": "file" },
+            { "path": "docker-compose.yaml", "type": "file" },
+            { "path": "docker-compose.full.yaml", "type": "file" },
+            { "path": ".dockerignore", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click the highlighted file to see the multi-stage build",
+          "target": "Dockerfile"
+        }
+      ]
+    },
+    {
+      "id": "step-3-initialization-scripts",
+      "title": "Container Initialization",
+      "description": "Three scripts orchestrate container startup. The entrypoint runs on every boot — it remaps user and group IDs to match the host, preventing permission issues with bind mounts, and triggers first-boot setup. The bootstrap runs once, copying settings, memory context, and git configuration into place. The notification script optionally sends push alerts when Claude finishes a task or encounters an error.",
+      "estimatedTime": 90,
+      "focusDirectory": "scripts",
+      "highlightLayers": [
+        {
+          "id": "entrypoint",
+          "name": "Entrypoint (every boot)",
+          "color": "#10b981",
+          "items": [
+            { "path": "scripts/entrypoint.sh", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "bootstrap",
+          "name": "Bootstrap (first boot)",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "scripts/bootstrap.sh", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "notifications",
+          "name": "Notifications (optional)",
+          "color": "#8b5cf6",
+          "items": [
+            { "path": "scripts/notify.sh", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click the entrypoint to see the startup sequence",
+          "target": "scripts/entrypoint.sh"
+        }
+      ]
+    },
+    {
+      "id": "step-4-configuration",
+      "title": "Configuration & Memory",
+      "description": "This directory holds templates copied into the container on first boot. The settings file configures Claude Code's default permission mode, preferred model, and notification hooks. The two memory files give Claude contextual awareness of its environment — what tools are pre-installed, what's available on-demand, and how to use the container effectively.",
+      "estimatedTime": 60,
+      "focusDirectory": "config",
+      "highlightLayers": [
+        {
+          "id": "settings",
+          "name": "Claude Code Settings",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "config/settings.json", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "memory",
+          "name": "Memory Context Files",
+          "color": "#ec4899",
+          "items": [
+            { "path": "config/claude-memory-full.md", "type": "file" },
+            { "path": "config/claude-memory-slim.md", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click the settings file to see the default Claude Code configuration",
+          "target": "config/settings.json"
+        }
+      ]
+    },
+    {
+      "id": "step-5-process-supervision",
+      "title": "s6-overlay Process Supervision",
+      "description": "HolyClaude uses s6-overlay — a Docker-native process supervisor designed for container environments. Two long-running services are defined here: one launches the CloudCLI web UI as a non-root user, and the other provides a virtual display for headless browser operations. Both auto-restart on failure.",
+      "estimatedTime": 60,
+      "focusDirectory": "s6-overlay",
+      "highlightLayers": [
+        {
+          "id": "cloudcli-service",
+          "name": "CloudCLI Web UI Service",
+          "color": "#06b6d4",
+          "items": [
+            { "path": "s6-overlay/s6-rc.d/cloudcli", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "xvfb-service",
+          "name": "Xvfb Display Service",
+          "color": "#f97316",
+          "items": [
+            { "path": "s6-overlay/s6-rc.d/xvfb", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "hover-directory",
+          "description": "Hover over the web UI service to see its configuration files",
+          "target": "s6-overlay/s6-rc.d/cloudcli"
+        }
+      ]
+    },
+    {
+      "id": "step-6-ci-cd",
+      "title": "CI/CD & GitHub Automation",
+      "description": "This directory contains the full automation pipeline. The workflow builds both full and slim image variants for multiple architectures, then pushes versioned tags to Docker Hub. Issue templates standardize bug reports, feature requests, and package requests. A pull request template ensures consistent contributions.",
+      "estimatedTime": 60,
+      "focusDirectory": ".github",
+      "highlightLayers": [
+        {
+          "id": "ci-workflow",
+          "name": "Docker Build Pipeline",
+          "color": "#ef4444",
+          "items": [
+            { "path": ".github/workflows", "type": "directory" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "issue-templates",
+          "name": "Issue & PR Templates",
+          "color": "#a855f7",
+          "items": [
+            { "path": ".github/ISSUE_TEMPLATE", "type": "directory" },
+            { "path": ".github/pull_request_template.md", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "border"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click the workflow file to see the multi-architecture build pipeline",
+          "target": ".github/workflows/docker-publish.yml"
+        }
+      ]
+    },
+    {
+      "id": "step-7-documentation",
+      "title": "Documentation",
+      "description": "Deep technical references live here. The architecture guide diagrams the container startup flow and explains key design decisions. The configuration reference covers every environment variable, volume mount, and port mapping. The troubleshooting guide addresses common issues like database locking on network mounts, browser crashes, and permission errors.",
+      "estimatedTime": 60,
+      "focusDirectory": "docs",
+      "highlightLayers": [
+        {
+          "id": "docs-layer",
+          "name": "Technical Documentation",
+          "color": "#14b8a6",
+          "items": [
+            { "path": "docs/architecture.md", "type": "file" },
+            { "path": "docs/configuration.md", "type": "file" },
+            { "path": "docs/troubleshooting.md", "type": "file" },
+            { "path": "docs/CHANGELOG.md", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        }
+      ],
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click the architecture guide to understand the container internals",
+          "target": "docs/architecture.md"
+        }
+      ]
+    },
+    {
+      "id": "step-8-full-picture",
+      "title": "The Full Picture",
+      "description": "You've now seen all the key pieces of HolyClaude: the multi-stage build creates the image, initialization scripts prepare the container, the process supervisor keeps services running, configuration provides sensible defaults, and CI/CD handles multi-architecture builds and publishing. To get started, copy the compose file, set your API key, and bring the container up. Happy building!",
+      "estimatedTime": 30,
+      "focusDirectory": "",
+      "colorMode": "fileTypes",
+      "interactiveActions": [
+        {
+          "type": "explore",
+          "description": "Explore the codebase freely — click any building to inspect its files"
+        }
+      ],
+      "resources": [
+        {
+          "title": "HolyClaude README",
+          "url": "https://github.com/CoderLuii/HolyClaude",
+          "type": "documentation"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "author": "Claude",
+    "createdAt": "2026-03-25",
+    "tags": ["onboarding", "docker", "claude-code", "devtools"]
+  }
+}
